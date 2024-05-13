@@ -6,9 +6,6 @@
 
 package com.provismet.lilylib.particle;
 
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.particle.SpriteProvider;
@@ -16,7 +13,9 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
 
 /**
  * <p> A particle that renders flat on the ground.
@@ -94,21 +93,20 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
         float yLerp = (float)(MathHelper.lerp((double)tickDelta, this.prevPosY, this.y) - vec3d.getY());
         float zLerp = (float)(MathHelper.lerp((double)tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
 
-        Quaternionf quaternion = new Quaternionf();
-        quaternion.rotateX(MathHelper.lerp(tickDelta, this.prevAngleX, this.angleX));
-        quaternion.rotateY(MathHelper.lerp(tickDelta, this.prevAngle, this.angle));
-        quaternion.rotateZ(MathHelper.lerp(tickDelta, this.prevAngleZ, this.angleZ));
+        Quaternion quaternion = new Quaternion(Vec3f.POSITIVE_X, MathHelper.lerp(tickDelta, this.prevAngleX, this.angleX), false);
+        quaternion.hamiltonProduct(new Quaternion(Vec3f.POSITIVE_Y, MathHelper.lerp(tickDelta, this.prevAngle, this.angle), false));
+        quaternion.hamiltonProduct(new Quaternion(Vec3f.POSITIVE_Z, MathHelper.lerp(tickDelta, this.prevAngleZ, this.angleZ), false));
 
-        Vector3f[] vector3fs = new Vector3f[] {
-            new Vector3f(-1f, 0f, -1f),
-            new Vector3f(-1f, 0f, 1f),
-            new Vector3f(1f, 0f, 1f),
-            new Vector3f(1f, 0f, -1f)
+        Vec3f[] vector3fs = new Vec3f[] {
+            new Vec3f(-1f, 0f, -1f),
+            new Vec3f(-1f, 0f, 1f),
+            new Vec3f(1f, 0f, 1f),
+            new Vec3f(1f, 0f, -1f)
         };
 
-        for (Vector3f vector3f : vector3fs) {
+        for (Vec3f vector3f : vector3fs) {
             vector3f.rotate(quaternion);
-            vector3f.mul(this.getSize(tickDelta));
+            vector3f.scale(this.getSize(tickDelta));
             vector3f.add(xLerp, yLerp, zLerp);
         }
 
@@ -117,9 +115,9 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
         float minV = this.getMinV();
         float maxV = this.getMaxV();
         int brightness = this.getBrightness(tickDelta);
-        vertexConsumer.vertex(vector3fs[0].x(), vector3fs[0].y(), vector3fs[0].z()).texture(maxU, maxV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
-        vertexConsumer.vertex(vector3fs[1].x(), vector3fs[1].y(), vector3fs[1].z()).texture(maxU, minV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
-        vertexConsumer.vertex(vector3fs[2].x(), vector3fs[2].y(), vector3fs[2].z()).texture(minU, minV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
-        vertexConsumer.vertex(vector3fs[3].x(), vector3fs[3].y(), vector3fs[3].z()).texture(minU, maxV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
+        vertexConsumer.vertex(vector3fs[0].getX(), vector3fs[0].getY(), vector3fs[0].getZ()).texture(maxU, maxV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
+        vertexConsumer.vertex(vector3fs[1].getX(), vector3fs[1].getY(), vector3fs[1].getZ()).texture(maxU, minV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
+        vertexConsumer.vertex(vector3fs[2].getX(), vector3fs[2].getY(), vector3fs[2].getZ()).texture(minU, minV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
+        vertexConsumer.vertex(vector3fs[3].getX(), vector3fs[3].getY(), vector3fs[3].getZ()).texture(minU, maxV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
     }
 }

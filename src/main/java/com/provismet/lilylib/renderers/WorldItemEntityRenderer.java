@@ -16,13 +16,14 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3f;
 
 /**
  * EntityRenderer for {@link WorldItemEntity}.
@@ -55,10 +56,10 @@ public class WorldItemEntityRenderer<T extends Entity> extends EntityRenderer<T>
         float dz = itemEntity.getZOffset(tickDelta);
 
         matrices.translate(dx, dy, dz);
-        if (rx != 0) matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(rx));
-        if (ry != 0) matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(ry));
-        if (rz != 0) matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rz));
-        this.itemRenderer.renderItem(itemStack, ModelTransformationMode.GROUND, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+        if (rx != 0) matrices.multiply(new Quaternion(Vec3f.POSITIVE_X, rx, true));
+        if (ry != 0) matrices.multiply(new Quaternion(Vec3f.POSITIVE_Y, ry, true));
+        if (rz != 0) matrices.multiply(new Quaternion(Vec3f.POSITIVE_Z, rz, true));
+        this.itemRenderer.renderItem(itemStack, ModelTransformation.Mode.GROUND, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
         matrices.pop();
 
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
