@@ -6,6 +6,7 @@
 
 package com.provismet.lilylib.interfaces.entity;
 
+import com.provismet.lilylib.renderers.WorldItemEntityRenderer;
 import net.minecraft.entity.FlyingItemEntity;
 
 /**

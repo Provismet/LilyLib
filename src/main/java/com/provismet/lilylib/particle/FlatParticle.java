@@ -83,16 +83,16 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
     /**
      * Renders a flat, upwards-facing particle.
      * 
-     * @param vertexConsumer
-     * @param camera
-     * @param tickDelta
+     * @param vertexConsumer Rendering buffer.
+     * @param camera The camera.
+     * @param tickDelta The progress from the current tick to the next.
      */
     @Override
     public void buildGeometry (VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
         Vec3d vec3d = camera.getPos();
-        float xLerp = (float)(MathHelper.lerp((double)tickDelta, this.prevPosX, this.x) - vec3d.getX());
-        float yLerp = (float)(MathHelper.lerp((double)tickDelta, this.prevPosY, this.y) - vec3d.getY());
-        float zLerp = (float)(MathHelper.lerp((double)tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
+        float xLerp = (float)(MathHelper.lerp(tickDelta, this.prevPosX, this.x) - vec3d.getX());
+        float yLerp = (float)(MathHelper.lerp(tickDelta, this.prevPosY, this.y) - vec3d.getY());
+        float zLerp = (float)(MathHelper.lerp(tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
 
         Quaternionf quaternion = new Quaternionf();
         quaternion.rotateX(MathHelper.lerp(tickDelta, this.prevAngleX, this.angleX));

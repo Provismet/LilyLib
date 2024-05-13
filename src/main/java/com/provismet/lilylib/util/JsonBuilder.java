@@ -12,7 +12,7 @@ import java.util.Iterator;
  * Builds JSON-formatted strings. This is a wrapper of the StringBuilder type.
  */
 public class JsonBuilder {
-    private StringBuilder builder;
+    private final StringBuilder builder;
     private int indentationLevel;
 
     public JsonBuilder () {
@@ -139,9 +139,9 @@ public class JsonBuilder {
     }
 
     /**
-     * Creates an entire array from an iterable of String values.
+     * <p> Creates an entire array from an iterable of String values. </p>
      * 
-     * This function encapsulates the starting and closing of the array.
+     * <p> This function encapsulates the starting and closing of the array. </p>
      * 
      * @param key The key of the key-value pair.
      * @param values The values of the array.
@@ -191,7 +191,7 @@ public class JsonBuilder {
 
     /**
      * Creates a new line with an optional comma.
-     * @param addComma
+     * @param addComma Whether a comma should be added at the end of the line.
      * @return this
      */
     public JsonBuilder newLine (boolean addComma) {
@@ -207,9 +207,9 @@ public class JsonBuilder {
     }
 
     /**
-     * Builds and returns the current String held by the internal StringBuilder.
+     * <p> Builds and returns the current String held by the internal StringBuilder. </p>
      * 
-     * Use this to output the final JSON string.
+     * <p> Use this to output the final JSON string. </p>
      * 
      * @return The current string representation of the JSON object.
      */
