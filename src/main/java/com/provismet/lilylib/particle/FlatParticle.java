@@ -95,6 +95,7 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
         float zLerp = (float)(MathHelper.lerp(tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
 
         Quaternionf quaternion = new Quaternionf();
+        this.getRotator().setRotation(quaternion, camera, tickDelta);
         quaternion.rotateX(MathHelper.lerp(tickDelta, this.prevAngleX, this.angleX));
         quaternion.rotateY(MathHelper.lerp(tickDelta, this.prevAngle, this.angle));
         quaternion.rotateZ(MathHelper.lerp(tickDelta, this.prevAngleZ, this.angleZ));
@@ -112,14 +113,6 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
             vector3f.add(xLerp, yLerp, zLerp);
         }
 
-        float minU = this.getMinU();
-        float maxU = this.getMaxU();
-        float minV = this.getMinV();
-        float maxV = this.getMaxV();
-        int brightness = this.getBrightness(tickDelta);
-        vertexConsumer.vertex(vector3fs[0].x(), vector3fs[0].y(), vector3fs[0].z()).texture(maxU, maxV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
-        vertexConsumer.vertex(vector3fs[1].x(), vector3fs[1].y(), vector3fs[1].z()).texture(maxU, minV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
-        vertexConsumer.vertex(vector3fs[2].x(), vector3fs[2].y(), vector3fs[2].z()).texture(minU, minV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
-        vertexConsumer.vertex(vector3fs[3].x(), vector3fs[3].y(), vector3fs[3].z()).texture(minU, maxV).color(this.red, this.green, this.blue, this.alpha).light(brightness).next();
+        this.method_60373(vertexConsumer, camera, quaternion, tickDelta);
     }
 }
