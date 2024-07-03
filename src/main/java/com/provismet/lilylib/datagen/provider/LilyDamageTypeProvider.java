@@ -32,7 +32,7 @@ public abstract class LilyDamageTypeProvider extends FabricDynamicRegistryProvid
     public static class DamageConsumer {
         private final Entries entries;
 
-        private DamageConsumer (Entries entries) {
+        protected DamageConsumer (Entries entries) {
             this.entries = entries;
         }
 
