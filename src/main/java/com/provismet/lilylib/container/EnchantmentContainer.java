@@ -153,6 +153,27 @@ public class EnchantmentContainer {
         return this.internalBuilder.create(itemLookup, enchantmentLookup, damageLookup, blockLookup);
     }
 
+    /**
+     * Creates the translation key for this enchantment.
+     *
+     * @return The translation key.
+     */
+    public String getTranslationKey () {
+        return this.key.getValue().toTranslationKey("enchantment");
+    }
+
+    /**
+     * Creates a suffixed translation key for this enchantment.
+     * <p>
+     * The resulting key will have {@code .<suffix>} added to the end.
+     *
+     * @param suffix The string to append to the translation key.
+     * @return The translation key.
+     */
+    public String getTranslationKey (String suffix) {
+        return this.key.getValue().toTranslationKey("enchantment", suffix);
+    }
+
     @FunctionalInterface
     public interface BuilderBuilder {
         Enchantment.Builder create (RegistryEntryLookup<Item> itemLookup, RegistryEntryLookup<Enchantment> enchantmentLookup, RegistryEntryLookup<DamageType> damageLookup, RegistryEntryLookup<Block> blockLookup);
