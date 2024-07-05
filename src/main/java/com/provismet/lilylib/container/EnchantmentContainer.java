@@ -52,6 +52,7 @@ public class EnchantmentContainer {
      * Creates a generic registry entry for this enchantment.
      * <p>
      * NOTE: This method should only be used if the alternatives are unavailable.
+     * This method relies on builtin/bootstrapped registries and is likely to fail if used in gameplay.
      *
      * @return An optional RegistryEntry of this enchantment.
      */
@@ -85,6 +86,7 @@ public class EnchantmentContainer {
      * Creates a generic registry entry for this enchantment.
      * <p>
      * NOTE: This method should only be used if the alternatives are unavailable.
+     * This method relies on builtin/bootstrapped registries and is likely to fail if used in gameplay.
      *
      * @return An RegistryEntry of this enchantment.
      */
