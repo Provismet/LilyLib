@@ -7,8 +7,33 @@
 
 I've started needing to reuse some of my modding code, so now I need a library I guess.
 
+LilyLib is a general content and utility library for Minecraft. It aims to provide general support such as:
+
+### Minecraft/Fabric specific utility:
+- Datagen provider for enchantments.
+- Datagen provider for damage types.
+- Datagen provider for damage type tags.
+- Container classes for Enchantments and DamageTypes.
+- A more malleable renderer for item-based entities.
+  - Interface for such entities to implement.
+- Particle subclass for floor particles (such as AoE rings).
+- Entity relation checker.
+
+### General utility
+- JSON string builder.
+- Additional math methods.
+
+## Registries
+LilyLib is intended to be used in client-side mods, server-side mods, and mods that exist on both.  
+For this reason, LilyLib does not call any registry methods by itself. Mods that require LilyLib features to be registered should call the `register` methods themselves.
+
+LilyLib's register methods will internally check if they have been called before. It is safe for multiple mods to call the methods.
+
+Registry types include:
+- Fabric Resource Conditions
+
 ## License
-The library is license GNU-LGPL, so feel free to use it and package it with a mod. Though I have no idea why anyone would want to.
+The library is licensed as GNU-LGPL, so feel free to use it and package it within a mod. Though I have no idea why anyone would want to.
 
 ## Dependency
 Add to your build.gradle
