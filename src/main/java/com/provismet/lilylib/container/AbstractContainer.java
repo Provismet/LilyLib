@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2024 Provismet
+ *
+ * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
+ */
+
 package com.provismet.lilylib.container;
 
 import net.minecraft.registry.RegistryKey;
