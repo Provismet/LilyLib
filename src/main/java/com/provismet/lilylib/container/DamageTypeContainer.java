@@ -70,13 +70,23 @@ public class DamageTypeContainer extends AbstractContainer<DamageType> {
     /**
      * Returns a generic death message for this damage type.
      *
-     * @return "death.attack.{damage type id}"
+     * @return {@code "death.attack.<damage type id>"}
      */
-    public String getDeathTranslationKey () {
+    @Override
+    public String getTranslationKey () {
         return "death.attack." + this.type.msgId();
     }
 
-    public String getDeathTranslationKey (String suffix) {
-        return this.getDeathTranslationKey() + "." + suffix;
+    /**
+     * Returns a generic death message for this damage type, with a suffix appended.
+     * <p>
+     * Standard vanilla suffixes are "item" and "player".
+     *
+     * @param suffix {@code .<suffix>} will be appended to the end of the translation key.
+     * @return {@code "death.attack.<damage type id>.<suffix>"}
+     */
+    @Override
+    public String getTranslationKey (String suffix) {
+        return this.getTranslationKey() + "." + suffix;
     }
 }
