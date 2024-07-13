@@ -20,8 +20,7 @@ import org.jetbrains.annotations.Nullable;
  * @see RegistryKey
  * @see DamageType
  */
-public class DamageTypeContainer {
-    private final RegistryKey<DamageType> key;
+public class DamageTypeContainer extends AbstractContainer<DamageType> {
     private final DamageType type;
 
     public DamageTypeContainer (Identifier id, DamageType type) {
@@ -29,12 +28,8 @@ public class DamageTypeContainer {
     }
 
     public DamageTypeContainer (RegistryKey<DamageType> key, DamageType type) {
-        this.key = key;
+        super(key);
         this.type = type;
-    }
-
-    public RegistryKey<DamageType> getKey () {
-        return this.key;
     }
 
     public DamageType getDamageType () {
@@ -79,5 +74,9 @@ public class DamageTypeContainer {
      */
     public String getDeathTranslationKey () {
         return "death.attack." + this.type.msgId();
+    }
+
+    public String getDeathTranslationKey (String suffix) {
+        return this.getDeathTranslationKey() + "." + suffix;
     }
 }

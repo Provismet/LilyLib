@@ -28,8 +28,7 @@ import java.util.Optional;
  * @see RegistryKey
  * @see Enchantment.Builder
  */
-public class EnchantmentContainer {
-    private final RegistryKey<Enchantment> key;
+public class EnchantmentContainer extends AbstractContainer<Enchantment> {
     private final BuilderBuilder internalBuilder;
 
     public EnchantmentContainer (Identifier id, BuilderBuilder builder) {
@@ -37,15 +36,8 @@ public class EnchantmentContainer {
     }
 
     public EnchantmentContainer (RegistryKey<Enchantment> key, BuilderBuilder builder) {
-        this.key = key;
+        super(key);
         this.internalBuilder = builder;
-    }
-
-    /**
-     * @return The RegistryKey associated with this enchantment.
-     */
-    public RegistryKey<Enchantment> getKey () {
-        return this.key;
     }
 
     /**
@@ -84,8 +76,8 @@ public class EnchantmentContainer {
 
     /**
      * Creates a generic registry entry for this enchantment.
-     * <p>
-     * NOTE: This method should only be used if the alternatives are unavailable.
+     *
+     * @implNote This method should only be used if the alternatives are unavailable.
      * This method relies on builtin/bootstrapped registries and is likely to fail if used in gameplay.
      *
      * @return An RegistryEntry of this enchantment.
