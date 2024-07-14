@@ -39,8 +39,8 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
         this.velocityX = 0f;
         this.velocityY = 0f;
         this.velocityZ = 0f;
-        this.angleX = 0f;
-        this.prevAngleX = 0f;
+        this.angleX = -MathHelper.HALF_PI; // Makes the particle face upwards.
+        this.prevAngleX = -MathHelper.HALF_PI;
         this.angleZ = 0f;
         this.prevAngleZ = 0f;
     }
@@ -95,7 +95,6 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
         float zLerp = (float)(MathHelper.lerp(tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
 
         Quaternionf quaternion = new Quaternionf();
-        this.getRotator().setRotation(quaternion, camera, tickDelta);
         quaternion.rotateX(MathHelper.lerp(tickDelta, this.prevAngleX, this.angleX));
         quaternion.rotateY(MathHelper.lerp(tickDelta, this.prevAngle, this.angle));
         quaternion.rotateZ(MathHelper.lerp(tickDelta, this.prevAngleZ, this.angleZ));
