@@ -34,14 +34,14 @@ public abstract class LilySoundProvider implements DataProvider {
         this.registryLookup = registryLookup;
     }
 
-    protected abstract void generateSoundFile (SoundWriter writer);
+    protected abstract void generateSoundFile (RegistryWrapper.WrapperLookup registryLookup, SoundWriter writer);
 
     @Override
     public CompletableFuture<?> run (DataWriter writer) {
         final TreeMap<String, SoundEntry> contents = new TreeMap<>();
 
         return this.registryLookup.thenCompose(lookup -> {
-            this.generateSoundFile(new SoundWriter(contents));
+            this.generateSoundFile(lookup, new SoundWriter(contents));
 
             HashMap<String, JsonObject> cachedObjects = new HashMap<>();
             final List<CompletableFuture<?>> futures = new ArrayList<>();
