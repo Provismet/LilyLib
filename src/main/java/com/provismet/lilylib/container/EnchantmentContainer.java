@@ -55,7 +55,7 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      * @return An optional RegistryEntry of this enchantment.
      */
     public Optional<? extends RegistryEntry<Enchantment>> getEntry () {
-        return BuiltinRegistries.createWrapperLookup().createRegistryLookup().getOptionalEntry(RegistryKeys.ENCHANTMENT, this.getKey());
+        return BuiltinRegistries.createWrapperLookup().getOrThrow(RegistryKeys.ENCHANTMENT).getOptional(this.getKey());
     }
 
     /**
@@ -67,7 +67,7 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      * @return An optional RegistryEntry of this enchantment.
      */
     public Optional<? extends RegistryEntry<Enchantment>> getEntry (DynamicRegistryManager manager) {
-        return manager.get(RegistryKeys.ENCHANTMENT).getEntry(this.key);
+        return manager.getOrThrow(RegistryKeys.ENCHANTMENT).getOptional(this.key);
     }
 
     /**
@@ -77,7 +77,7 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      * @return An optional RegistryEntry of this enchantment.
      */
     public Optional<? extends RegistryEntry<Enchantment>> getEntry (RegistryWrapper.WrapperLookup registryLookup) {
-        return registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT).getOptional(this.key);
+        return registryLookup.getOrThrow(RegistryKeys.ENCHANTMENT).getOptional(this.key);
     }
 
     /**

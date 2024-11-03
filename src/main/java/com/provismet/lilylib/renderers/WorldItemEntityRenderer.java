@@ -8,6 +8,7 @@ package com.provismet.lilylib.renderers;
 
 import com.provismet.lilylib.interfaces.entity.WorldItemEntity;
 
+import com.provismet.lilylib.renderers.states.WorldItemEntityRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
@@ -15,13 +16,9 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.util.math.RotationAxis;
 
 /**
@@ -30,7 +27,7 @@ import net.minecraft.util.math.RotationAxis;
  * <p> The rotation and offset within the bounding box of the entity are controlled by the implementing class.
  */
 @Environment(EnvType.CLIENT)
-public class WorldItemEntityRenderer<T extends Entity> extends EntityRenderer<T> {
+public class WorldItemEntityRenderer<T extends Entity> extends EntityRenderer<T, WorldItemEntityRenderState> {
     private final ItemRenderer itemRenderer;
 
     public WorldItemEntityRenderer (Context ctx) {
@@ -39,34 +36,34 @@ public class WorldItemEntityRenderer<T extends Entity> extends EntityRenderer<T>
     }
 
     @Override
-    public void render (T entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        ItemStack itemStack;
-        if (entity instanceof WorldItemEntity itemEntity) itemStack = itemEntity.getStack();
-        else return;
-
-        matrices.push();
-        BakedModel model = this.itemRenderer.getModel(itemStack, entity.getWorld(), null, entity.getId());
-        float rx = itemEntity.getXRotation(tickDelta);
-        float ry = itemEntity.getYRotation(tickDelta);
-        float rz = itemEntity.getZRotation(tickDelta);
-        
-        float dx = itemEntity.getXOffset(tickDelta);
-        float dy = itemEntity.getYOffset(tickDelta);
-        float dz = itemEntity.getZOffset(tickDelta);
-
-        matrices.translate(dx, dy, dz);
-        if (rx != 0) matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(rx));
-        if (ry != 0) matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(ry));
-        if (rz != 0) matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rz));
-        this.itemRenderer.renderItem(itemStack, ModelTransformationMode.GROUND, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
-        matrices.pop();
-
-        super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
+    public WorldItemEntityRenderState createRenderState () {
+        return new WorldItemEntityRenderState();
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public Identifier getTexture (T entity) {
-        return SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
+    public void updateRenderState (T entity, WorldItemEntityRenderState state, float tickDelta) {
+        super.updateRenderState(entity, state, tickDelta);
+        if (entity instanceof WorldItemEntity worldItem) {
+            state.xRotation = worldItem.getXRotation(tickDelta);
+            state.yRotation = worldItem.getYRotation(tickDelta);
+            state.zRotation = worldItem.getZRotation(tickDelta);
+            state.xOffset = worldItem.getXOffset(tickDelta);
+            state.yOffset = worldItem.getYOffset(tickDelta);
+            state.zOffset = worldItem.getZOffset(tickDelta);
+        }
+    }
+
+    @Override
+    public void render (WorldItemEntityRenderState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+        matrices.push();
+        matrices.translate(state.xOffset, state.yOffset, state.zOffset);
+        if (state.xRotation != 0) matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(state.xRotation));
+        if (state.yRotation != 0) matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(state.yRotation));
+        if (state.zRotation != 0) matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(state.zRotation));
+
+        this.itemRenderer.renderItem(state.stack, ModelTransformationMode.GROUND, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, state.model);
+        matrices.pop();
+
+        super.render(state, matrices, vertexConsumers, light);
     }
 }

@@ -10,6 +10,7 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.registry.RegistryOps;
 import net.minecraft.registry.RegistryWrapper;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,7 @@ public record DevModeResourceCondition () implements ResourceCondition {
     }
 
     @Override
-    public boolean test (@Nullable RegistryWrapper.WrapperLookup registryLookup) {
+    public boolean test (@Nullable RegistryOps.RegistryInfoGetter registryInfoGetter) {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 }

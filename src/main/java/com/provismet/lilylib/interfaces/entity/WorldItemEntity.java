@@ -17,27 +17,22 @@ import net.minecraft.entity.FlyingItemEntity;
  * <p> See {@link WorldItemEntityRenderer} for how this is used.
  */
 public interface WorldItemEntity extends FlyingItemEntity {
-    public default float getXRotation (float tickDelta) {
+    default float getXRotation (float tickDelta) {
         return 0f;
     }
-
-    public default float getYRotation (float tickDelta) {
+    default float getYRotation (float tickDelta) {
         return 0f;
     }
-
-    public default float getZRotation (float tickDelta) {
+    default float getZRotation (float tickDelta) {
         return 0f;
     }
-
-    public default float getXOffset (float tickDelta) {
+    default float getXOffset (float tickDelta) {
         return 0f;
     }
-    
-    public default float getYOffset (float tickDelta) {
+    default float getYOffset (float tickDelta) {
         return 0f;
     }
-    
-    public default float getZOffset (float tickDelta) {
+    default float getZOffset (float tickDelta) {
         return 0f;
     }
 }
