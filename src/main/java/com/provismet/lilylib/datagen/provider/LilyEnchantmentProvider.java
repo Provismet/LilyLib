@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryEntryLookup;
@@ -47,6 +48,7 @@ public abstract class LilyEnchantmentProvider extends FabricDynamicRegistryProvi
         public final RegistryEntryLookup<DamageType> damageTypeLookup;
         public final RegistryEntryLookup<Block> blockLookup;
         public final RegistryEntryLookup<Enchantment> enchantmentLookup;
+        public final RegistryEntryLookup<EntityType<?>> entityLookup;
 
         private final Entries entries;
 
@@ -56,6 +58,7 @@ public abstract class LilyEnchantmentProvider extends FabricDynamicRegistryProvi
             this.damageTypeLookup = entries.getLookup(RegistryKeys.DAMAGE_TYPE);
             this.blockLookup = entries.getLookup(RegistryKeys.BLOCK);
             this.enchantmentLookup = entries.getLookup(RegistryKeys.ENCHANTMENT);
+            this.entityLookup = entries.getLookup(RegistryKeys.ENTITY_TYPE);
         }
 
         public void add (Identifier id, Enchantment.Builder enchantmentBuilder) {

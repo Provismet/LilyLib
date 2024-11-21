@@ -9,6 +9,7 @@ package com.provismet.lilylib.container;
 import com.provismet.lilylib.datagen.provider.LilyEnchantmentProvider;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.Item;
 import net.minecraft.registry.BuiltinRegistries;
@@ -125,7 +126,8 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
         RegistryEntryLookup<Enchantment> enchantmentLookup = registerable.getRegistryLookup(RegistryKeys.ENCHANTMENT);
         RegistryEntryLookup<DamageType> damageLookup = registerable.getRegistryLookup(RegistryKeys.DAMAGE_TYPE);
         RegistryEntryLookup<Block> blockLookup = registerable.getRegistryLookup(RegistryKeys.BLOCK);
-        return this.getBuilder(itemLookup, enchantmentLookup, damageLookup, blockLookup);
+        RegistryEntryLookup<EntityType<?>> entityLookup = registerable.getRegistryLookup(RegistryKeys.ENTITY_TYPE);
+        return this.getBuilder(itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup);
     }
 
     /**
@@ -137,7 +139,13 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      * @return The enchantment builder.
      */
     public Enchantment.Builder getBuilder (LilyEnchantmentProvider.EnchantmentBuilder enchantmentBuilder) {
-        return this.getBuilder(enchantmentBuilder.itemLookup, enchantmentBuilder.enchantmentLookup, enchantmentBuilder.damageTypeLookup, enchantmentBuilder.blockLookup);
+        return this.getBuilder(
+            enchantmentBuilder.itemLookup,
+            enchantmentBuilder.enchantmentLookup,
+            enchantmentBuilder.damageTypeLookup,
+            enchantmentBuilder.blockLookup,
+            enchantmentBuilder.entityLookup
+        );
     }
 
     /**
@@ -149,8 +157,8 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      * @param blockLookup  Registry lookup for block tags.
      * @return The enchantment builder.
      */
-    public Enchantment.Builder getBuilder (RegistryEntryLookup<Item> itemLookup, RegistryEntryLookup<Enchantment> enchantmentLookup, RegistryEntryLookup<DamageType> damageLookup, RegistryEntryLookup<Block> blockLookup) {
-        return this.internalBuilder.create(itemLookup, enchantmentLookup, damageLookup, blockLookup);
+    public Enchantment.Builder getBuilder (RegistryEntryLookup<Item> itemLookup, RegistryEntryLookup<Enchantment> enchantmentLookup, RegistryEntryLookup<DamageType> damageLookup, RegistryEntryLookup<Block> blockLookup, RegistryEntryLookup<EntityType<?>> entityLookup) {
+        return this.internalBuilder.create(itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup);
     }
 
     @Override
@@ -165,6 +173,12 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
 
     @FunctionalInterface
     public interface BuilderBuilder {
-        Enchantment.Builder create (RegistryEntryLookup<Item> itemLookup, RegistryEntryLookup<Enchantment> enchantmentLookup, RegistryEntryLookup<DamageType> damageLookup, RegistryEntryLookup<Block> blockLookup);
+        Enchantment.Builder create (
+            RegistryEntryLookup<Item> itemLookup,
+            RegistryEntryLookup<Enchantment> enchantmentLookup,
+            RegistryEntryLookup<DamageType> damageLookup,
+            RegistryEntryLookup<Block> blockLookup,
+            RegistryEntryLookup<EntityType<?>> entityLookup
+        );
     }
 }
