@@ -50,6 +50,8 @@ public class WorldItemEntityRenderer<T extends Entity> extends EntityRenderer<T,
             state.xOffset = worldItem.getXOffset(tickDelta);
             state.yOffset = worldItem.getYOffset(tickDelta);
             state.zOffset = worldItem.getZOffset(tickDelta);
+            state.stack = worldItem.getStack().copy();
+            state.model = this.itemRenderer.getModel(worldItem.getStack(), entity.getWorld(), null, entity.getId());
         }
     }
 
