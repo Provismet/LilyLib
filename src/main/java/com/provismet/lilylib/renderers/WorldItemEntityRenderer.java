@@ -11,14 +11,13 @@ import com.provismet.lilylib.interfaces.entity.WorldItemEntity;
 import com.provismet.lilylib.renderers.states.WorldItemEntityRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.item.ItemModelManager;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.util.math.RotationAxis;
 
 /**
@@ -28,11 +27,11 @@ import net.minecraft.util.math.RotationAxis;
  */
 @Environment(EnvType.CLIENT)
 public class WorldItemEntityRenderer<T extends Entity> extends EntityRenderer<T, WorldItemEntityRenderState> {
-    private final ItemRenderer itemRenderer;
+    private final ItemModelManager modelManager;
 
     public WorldItemEntityRenderer (Context ctx) {
         super(ctx);
-        this.itemRenderer = ctx.getItemRenderer();
+        this.modelManager = ctx.getItemModelManager();
     }
 
     @Override
@@ -50,8 +49,7 @@ public class WorldItemEntityRenderer<T extends Entity> extends EntityRenderer<T,
             state.xOffset = worldItem.getXOffset(tickDelta);
             state.yOffset = worldItem.getYOffset(tickDelta);
             state.zOffset = worldItem.getZOffset(tickDelta);
-            state.stack = worldItem.getStack().copy();
-            state.model = this.itemRenderer.getModel(worldItem.getStack(), entity.getWorld(), null, entity.getId());
+            state.update(entity, worldItem.getStack(), this.modelManager);
         }
     }
 
@@ -63,7 +61,7 @@ public class WorldItemEntityRenderer<T extends Entity> extends EntityRenderer<T,
         if (state.yRotation != 0) matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(state.yRotation));
         if (state.zRotation != 0) matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(state.zRotation));
 
-        this.itemRenderer.renderItem(state.stack, ModelTransformationMode.GROUND, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, state.model);
+        state.itemRenderState.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
         matrices.pop();
 
         super.render(state, matrices, vertexConsumers, light);

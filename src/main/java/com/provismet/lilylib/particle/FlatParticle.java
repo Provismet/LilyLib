@@ -88,7 +88,7 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
      * @param tickDelta The progress from the current tick to the next.
      */
     @Override
-    public void buildGeometry (VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
+    public void render (VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
         Vec3d vec3d = camera.getPos();
         float xLerp = (float)(MathHelper.lerp(tickDelta, this.prevPosX, this.x) - vec3d.getX());
         float yLerp = (float)(MathHelper.lerp(tickDelta, this.prevPosY, this.y) - vec3d.getY());
