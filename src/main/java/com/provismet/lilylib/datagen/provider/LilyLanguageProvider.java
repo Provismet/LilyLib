@@ -27,6 +27,7 @@ public abstract class LilyLanguageProvider extends FabricLanguageProvider {
     protected void addEnchantment (TranslationBuilder translationBuilder, EnchantmentContainer container, String name, String description) {
         translationBuilder.add(container.getTranslationKey(), name);
         translationBuilder.add(container.getTranslationKey("desc"), description);
+        translationBuilder.add(container.getTranslationKey("description"), description);
     }
 
     protected void addDeathMessage (TranslationBuilder translationBuilder, DamageTypeContainer container, String normalMessage, String itemMessage) {
