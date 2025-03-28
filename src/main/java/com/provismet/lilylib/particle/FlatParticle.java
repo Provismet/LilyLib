@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Provismet
+ * Copyright (C) 2024-2025 Provismet
  * 
  * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
  */
@@ -57,7 +57,7 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
     }
 
     public void setAngleY (float radians) {
-        this.prevAngle = this.angle;
+        this.lastAngle = this.angle;
         this.angle = radians;
     }
 
@@ -90,13 +90,13 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
     @Override
     public void render (VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
         Vec3d vec3d = camera.getPos();
-        float xLerp = (float)(MathHelper.lerp(tickDelta, this.prevPosX, this.x) - vec3d.getX());
-        float yLerp = (float)(MathHelper.lerp(tickDelta, this.prevPosY, this.y) - vec3d.getY());
-        float zLerp = (float)(MathHelper.lerp(tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
+        float xLerp = (float)(MathHelper.lerp(tickDelta, this.lastX, this.x) - vec3d.getX());
+        float yLerp = (float)(MathHelper.lerp(tickDelta, this.lastY, this.y) - vec3d.getY());
+        float zLerp = (float)(MathHelper.lerp(tickDelta, this.lastZ, this.z) - vec3d.getZ());
 
         Quaternionf quaternion = new Quaternionf();
         quaternion.rotateX(MathHelper.lerp(tickDelta, this.prevAngleX, this.angleX));
-        quaternion.rotateY(MathHelper.lerp(tickDelta, this.prevAngle, this.angle));
+        quaternion.rotateY(MathHelper.lerp(tickDelta, this.lastAngle, this.angle));
         quaternion.rotateZ(MathHelper.lerp(tickDelta, this.prevAngleZ, this.angleZ));
 
         Vector3f[] vector3fs = new Vector3f[] {
@@ -112,6 +112,6 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
             vector3f.add(xLerp, yLerp, zLerp);
         }
 
-        this.method_60373(vertexConsumer, camera, quaternion, tickDelta);
+        this.render(vertexConsumer, camera, quaternion, tickDelta);
     }
 }
