@@ -67,6 +67,13 @@ public class JsonReader {
         return this.getGeneric(key, JsonPrimitive::getAsString);
     }
 
+    public Optional<JsonObject> getObject (String key) {
+        return this.get(key).map(element -> {
+            if (element instanceof JsonObject jsonObject) return jsonObject;
+            return null;
+        });
+    }
+
     public Optional<JsonArray> getArray (String key) {
         return this.get(key).map(element -> {
             if (element instanceof JsonArray array) return array;
