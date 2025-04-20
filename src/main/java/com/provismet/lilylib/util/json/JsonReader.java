@@ -74,6 +74,10 @@ public class JsonReader {
         });
     }
 
+    public Optional<JsonReader> getObjectAsReader (String key) {
+        return this.getObject(key).map(JsonReader::new);
+    }
+
     public Optional<JsonArray> getArray (String key) {
         return this.get(key).map(element -> {
             if (element instanceof JsonArray array) return array;
