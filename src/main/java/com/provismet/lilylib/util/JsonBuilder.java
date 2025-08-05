@@ -10,7 +10,10 @@ import java.util.Iterator;
 
 /**
  * Builds JSON-formatted strings. This is a wrapper of the StringBuilder type.
+ * <p>
+ * Deprecated, this older version is only present for compatibility purposes. Use the other one instead.
  */
+@Deprecated(forRemoval = true)
 public class JsonBuilder {
     private final StringBuilder builder;
     private int indentationLevel;
