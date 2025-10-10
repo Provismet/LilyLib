@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Provismet
+ * Copyright (C) 2024-2025 Provismet
  * 
  * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
  */

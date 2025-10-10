@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2024-2025 Provismet
  * 
- * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
+ * See https://github.com/Provismet/LilyLib/blob/1.21.10/LICENSE for the full license.
  */
 
 package com.provismet.lilylib.particle;
