@@ -6,23 +6,21 @@
 
 package com.provismet.lilylib.particle;
 
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-
-import net.minecraft.client.particle.ParticleTextureSheet;
-import net.minecraft.client.particle.SpriteBillboardParticle;
+import net.minecraft.client.particle.BillboardParticle;
+import net.minecraft.client.particle.BillboardParticleSubmittable;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 /**
  * <p> A particle that renders flat on the ground.
  * <p> Supports animated sprites.
  */
-public abstract class FlatParticle extends SpriteBillboardParticle {
+public abstract class FlatParticle extends BillboardParticle {
     protected final SpriteProvider spriteProvider;
 
     protected float angleX;
@@ -31,9 +29,9 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
     protected float prevAngleZ;
 
     protected FlatParticle (ClientWorld clientWorld, double x, double y, double z, SpriteProvider spriteProvider) {
-        super(clientWorld, x, y, z);
+        super(clientWorld, x, y, z, spriteProvider.getFirst());
         this.spriteProvider = spriteProvider;
-        this.setSpriteForAge(this.spriteProvider);
+        this.updateSprite(this.spriteProvider);
         this.velocityMultiplier = 0f;
         this.gravityStrength = 0f;
         this.velocityX = 0f;
@@ -46,9 +44,9 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
     }
 
     protected FlatParticle (ClientWorld clientWorld, double x, double y, double z, double velocityX, double velocityY, double velocityZ, SpriteProvider spriteProvider) {
-        super(clientWorld, x, y, z, velocityX, velocityY, velocityZ);
+        super(clientWorld, x, y, z, velocityX, velocityY, velocityZ, spriteProvider.getFirst());
         this.spriteProvider = spriteProvider;
-        this.setSpriteForAge(this.spriteProvider);
+        this.updateSprite(this.spriteProvider);
     }
 
     public void setAngleX (float radians) {
@@ -57,8 +55,8 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
     }
 
     public void setAngleY (float radians) {
-        this.lastAngle = this.angle;
-        this.angle = radians;
+        this.lastZRotation = this.zRotation;
+        this.zRotation = radians;
     }
 
     public void setAngleZ (float radians) {
@@ -69,26 +67,26 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
     @Override
     public void tick () {
         super.tick();
-        this.setSpriteForAge(this.spriteProvider);
+        this.updateSprite(this.spriteProvider);
         if (this.age > this.maxAge / 2) {
             this.setAlpha(1.0f - ((float)this.age - (float)(this.maxAge / 2)) / (float)this.maxAge);
         }
     }
 
     @Override
-    public ParticleTextureSheet getType () {
-        return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+    public BillboardParticle.RenderType getRenderType() {
+        return BillboardParticle.RenderType.PARTICLE_ATLAS_TRANSLUCENT;
     }
 
     /**
      * Renders a flat, upwards-facing particle.
      * 
-     * @param vertexConsumer Rendering buffer.
+     * @param submittable Render information.
      * @param camera The camera.
      * @param tickDelta The progress from the current tick to the next.
      */
     @Override
-    public void render (VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
+    public void render (BillboardParticleSubmittable submittable, Camera camera, float tickDelta) {
         Vec3d vec3d = camera.getPos();
         float xLerp = (float)(MathHelper.lerp(tickDelta, this.lastX, this.x) - vec3d.getX());
         float yLerp = (float)(MathHelper.lerp(tickDelta, this.lastY, this.y) - vec3d.getY());
@@ -96,7 +94,7 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
 
         Quaternionf quaternion = new Quaternionf();
         quaternion.rotateX(MathHelper.lerp(tickDelta, this.prevAngleX, this.angleX));
-        quaternion.rotateY(MathHelper.lerp(tickDelta, this.lastAngle, this.angle));
+        quaternion.rotateY(MathHelper.lerp(tickDelta, this.lastZRotation, this.zRotation));
         quaternion.rotateZ(MathHelper.lerp(tickDelta, this.prevAngleZ, this.angleZ));
 
         Vector3f[] vector3fs = new Vector3f[] {
@@ -112,6 +110,6 @@ public abstract class FlatParticle extends SpriteBillboardParticle {
             vector3f.add(xLerp, yLerp, zLerp);
         }
 
-        this.render(vertexConsumer, camera, quaternion, tickDelta);
+        this.render(submittable, camera, quaternion, tickDelta);
     }
 }

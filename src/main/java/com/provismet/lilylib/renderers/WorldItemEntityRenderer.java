@@ -7,15 +7,15 @@
 package com.provismet.lilylib.renderers;
 
 import com.provismet.lilylib.interfaces.entity.WorldItemEntity;
-
 import com.provismet.lilylib.renderers.states.WorldItemEntityRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.item.ItemModelManager;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.RotationAxis;
@@ -54,16 +54,16 @@ public class WorldItemEntityRenderer<T extends Entity> extends EntityRenderer<T,
     }
 
     @Override
-    public void render (WorldItemEntityRenderState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+    public void render (WorldItemEntityRenderState state, MatrixStack matrices, OrderedRenderCommandQueue queue, CameraRenderState cameraState) {
         matrices.push();
         matrices.translate(state.xOffset, state.yOffset, state.zOffset);
         if (state.xRotation != 0) matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(state.xRotation));
         if (state.yRotation != 0) matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(state.yRotation));
         if (state.zRotation != 0) matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(state.zRotation));
 
-        state.itemRenderState.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+        state.itemRenderState.render(matrices, queue, state.light, OverlayTexture.DEFAULT_UV, state.outlineColor);
         matrices.pop();
 
-        super.render(state, matrices, vertexConsumers, light);
+        super.render(state, matrices, queue, cameraState);
     }
 }
