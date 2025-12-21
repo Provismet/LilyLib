@@ -87,7 +87,7 @@ public abstract class FlatParticle extends BillboardParticle {
      */
     @Override
     public void render (BillboardParticleSubmittable submittable, Camera camera, float tickDelta) {
-        Vec3d vec3d = camera.getPos();
+        Vec3d vec3d = camera.getCameraPos();
         float xLerp = (float)(MathHelper.lerp(tickDelta, this.lastX, this.x) - vec3d.getX());
         float yLerp = (float)(MathHelper.lerp(tickDelta, this.lastY, this.y) - vec3d.getY());
         float zLerp = (float)(MathHelper.lerp(tickDelta, this.lastZ, this.z) - vec3d.getZ());
