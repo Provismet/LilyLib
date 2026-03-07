@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Provismet
+ * Copyright (C) 2024-2026 Provismet
  * 
  * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
  */
@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import java.util.Arrays;
 
 /**
- * Builds JSON-formatted strings. This is a wrapper of JsonObject.
+ * Convenient builder class for creating JsonObjects and converting them to strings. This is a wrapper of JsonObject.
  */
 public class JsonBuilder {
     private final JsonObject json = new JsonObject();
@@ -65,8 +65,32 @@ public class JsonBuilder {
      * @param value Value
      * @return this
      */
+    public JsonBuilder append (String key, char value) {
+        this.json.addProperty(key, value);
+        return this;
+    }
+
+    /**
+     * Adds a key-value pair to the JSON object.
+     *
+     * @param key Key
+     * @param value Value
+     * @return this
+     */
     public JsonBuilder append (String key, JsonBuilder value) {
         this.json.add(key, value.json);
+        return this;
+    }
+
+    /**
+     * Adds a key-value pair to the JSON object.
+     *
+     * @param key Key
+     * @param value Value
+     * @return this
+     */
+    public JsonBuilder append (String key, JsonArrayBuilder value) {
+        this.json.add(key, value.getJson());
         return this;
     }
 
@@ -86,11 +110,13 @@ public class JsonBuilder {
      * <p> Creates an entire array from an iterable of String values. </p>
      * 
      * <p> This function encapsulates the starting and closing of the array. </p>
-     * 
+     *
+     * @deprecated Append JsonArrayBuilder instead.
      * @param key The key of the key-value pair.
      * @param values The values of the array.
      * @return this
      */
+    @Deprecated
     public JsonBuilder appendArray (String key, Iterable<String> values) {
         JsonArray array = new JsonArray();
         for (String value : values) {
@@ -104,11 +130,13 @@ public class JsonBuilder {
      * <p> Creates an entire array from an undefined number of String arguments. </p>
      * 
      * <p> Uses the iterable variant as its implementation. </p>
-     * 
+     *
+     * @deprecated Append JsonArrayBuilder instead.
      * @param key The key of the array.
      * @param values The contents of the array.
      * @return this
      */
+    @Deprecated
     public JsonBuilder appendArray (String key, String... values) {
         return this.appendArray(key, Arrays.stream(values).toList());
     }
