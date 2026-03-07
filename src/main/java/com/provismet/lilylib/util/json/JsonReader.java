@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -33,6 +34,24 @@ public class JsonReader {
             return new JsonReader(json);
         }
         return null;
+    }
+
+    @Nullable
+    public static JsonReader file (Path path) throws FileNotFoundException {
+        return file(path.toFile());
+    }
+
+    public static Optional<JsonReader> optionalFromFile (File file) {
+        try {
+            return Optional.ofNullable(file(file));
+        }
+        catch (FileNotFoundException e) {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<JsonReader> optionalFromFile (Path path) {
+        return optionalFromFile(path.toFile());
     }
 
     public Optional<Integer> getInteger (String key) {
