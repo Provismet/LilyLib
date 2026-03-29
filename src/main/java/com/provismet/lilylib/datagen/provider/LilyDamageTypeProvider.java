@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Provismet
+ * Copyright (C) 2024-2026 Provismet
  *
  * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
  */
@@ -9,26 +9,25 @@ package com.provismet.lilylib.datagen.provider;
 import com.provismet.lilylib.container.DamageTypeContainer;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.damagesource.DamageType;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class LilyDamageTypeProvider extends FabricDynamicRegistryProvider {
-    protected LilyDamageTypeProvider (FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    protected LilyDamageTypeProvider (FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
-    protected void configure (RegistryWrapper.WrapperLookup registries, Entries entries) {
+    protected void configure (HolderLookup.Provider registries, Entries entries) {
         DamageConsumer consumer = new DamageConsumer(entries);
         this.generate(registries, consumer);
     }
 
-    protected abstract void generate (RegistryWrapper.WrapperLookup registries, DamageConsumer consumer);
+    protected abstract void generate (HolderLookup.Provider registries, DamageConsumer consumer);
 
     @Override
     public String getName () {
@@ -42,12 +41,12 @@ public abstract class LilyDamageTypeProvider extends FabricDynamicRegistryProvid
             this.entries = entries;
         }
 
-        public void add (RegistryKey<DamageType> key, DamageType damageType) {
+        public void add (ResourceKey<DamageType> key, DamageType damageType) {
             this.entries.add(key, damageType);
         }
 
         public void add (Identifier id, DamageType damageType) {
-            this.add(RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id), damageType);
+            this.add(ResourceKey.create(Registries.DAMAGE_TYPE, id), damageType);
         }
 
         public void add (DamageTypeContainer container) {

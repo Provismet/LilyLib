@@ -1,25 +1,25 @@
 /*
- * Copyright (C) 2024 Provismet
+ * Copyright (C) 2024-2026 Provismet
  *
  * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
  */
 
 package com.provismet.lilylib.container;
 
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 
 public abstract class AbstractContainer<T> {
-    protected final RegistryKey<T> key;
+    protected final ResourceKey<T> key;
 
-    protected AbstractContainer (RegistryKey<T> key) {
+    protected AbstractContainer (ResourceKey<T> key) {
         this.key = key;
     }
 
     /**
      * @return The registry key associated with this container.
      */
-    public RegistryKey<T> getKey () {
+    public ResourceKey<T> getKey () {
         return this.key;
     }
 
@@ -27,7 +27,7 @@ public abstract class AbstractContainer<T> {
      * @return The identifier held in this container's registry key.
      */
     public Identifier getIdentifier () {
-        return this.key.getValue();
+        return this.key.identifier();
     }
 
     /**

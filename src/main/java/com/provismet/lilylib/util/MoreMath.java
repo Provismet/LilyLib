@@ -1,24 +1,24 @@
 /*
- * Copyright (C) 2024 Provismet
+ * Copyright (C) 2024-2026 Provismet
  * 
  * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
  */
 
 package com.provismet.lilylib.util;
 
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * An additional Math-related class that contains functions not covered by MathHelper.
  */
 public class MoreMath {
     public static double roundDownToMultiple (double value, double denominator) {
-        return (double)MathHelper.floor(value / denominator) * denominator;
+        return (double)Mth.floor(value / denominator) * denominator;
     }
 
     public static float roundDownToMultipleFloat (float value, float denominator) {
-        return (float)MathHelper.floor(value / denominator) * denominator;
+        return (float)Mth.floor(value / denominator) * denominator;
     }
 
     /**
@@ -38,9 +38,9 @@ public class MoreMath {
         private final double oppositeLength; // The side opposite to the end vector.
         private final double adjacentLength; // The non-hypotenuse side adjacent to the end vector.
 
-        public RightAngledTriangle (Vec3d hypotenuseStart, Vec3d hypotenuseEnd) {
-            this.oppositeLength = clamped(hypotenuseEnd.getX() - hypotenuseStart.getX());
-            this.adjacentLength = clamped(hypotenuseEnd.getZ() - hypotenuseStart.getZ());
+        public RightAngledTriangle (Vec3 hypotenuseStart, Vec3 hypotenuseEnd) {
+            this.oppositeLength = clamped(hypotenuseEnd.x() - hypotenuseStart.x());
+            this.adjacentLength = clamped(hypotenuseEnd.z() - hypotenuseStart.z());
             this.hypotenuseLength = Math.sqrt(this.oppositeLength * this.oppositeLength + this.adjacentLength * this.adjacentLength);
         }
 

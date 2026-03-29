@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Provismet
+ * Copyright (C) 2024-2026 Provismet
  *
  * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
  */
@@ -7,22 +7,21 @@
 package com.provismet.lilylib.container;
 
 import com.provismet.lilylib.datagen.provider.LilyEnchantmentProvider;
-import net.minecraft.block.Block;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.item.Item;
-import net.minecraft.registry.BuiltinRegistries;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registerable;
-import net.minecraft.registry.RegistryEntryLookup;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
-
 import java.util.Optional;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.Block;
 
 /**
  * Utility class for linking a registry key to an enchantment builder.
@@ -32,17 +31,17 @@ import java.util.Optional;
  * The EnchantmentContainer can be fed directly to the {} during
  * data generation.
  *
- * @see RegistryKey
+ * @see ResourceKey
  * @see Enchantment.Builder
  */
 public class EnchantmentContainer extends AbstractContainer<Enchantment> {
     private final BuilderBuilder internalBuilder;
 
     public EnchantmentContainer (Identifier id, BuilderBuilder builder) {
-        this(RegistryKey.of(RegistryKeys.ENCHANTMENT, id), builder);
+        this(ResourceKey.create(Registries.ENCHANTMENT, id), builder);
     }
 
-    public EnchantmentContainer (RegistryKey<Enchantment> key, BuilderBuilder builder) {
+    public EnchantmentContainer (ResourceKey<Enchantment> key, BuilderBuilder builder) {
         super(key);
         this.internalBuilder = builder;
     }
@@ -55,20 +54,20 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      *
      * @return An optional RegistryEntry of this enchantment.
      */
-    public Optional<? extends RegistryEntry<Enchantment>> getEntry () {
-        return BuiltinRegistries.createWrapperLookup().getOrThrow(RegistryKeys.ENCHANTMENT).getOptional(this.getKey());
+    public Optional<? extends Holder<Enchantment>> getEntry () {
+        return VanillaRegistries.createLookup().lookupOrThrow(Registries.ENCHANTMENT).get(this.getKey());
     }
 
     /**
      * Uses a registry manager to obtain an entry for this enchantment.
      *
-     * @see net.minecraft.world.WorldView
+     * @see net.minecraft.world.level.LevelReader
      *
      * @param manager A registry manager, typically obtained from a World.
      * @return An optional RegistryEntry of this enchantment.
      */
-    public Optional<? extends RegistryEntry<Enchantment>> getEntry (DynamicRegistryManager manager) {
-        return manager.getOrThrow(RegistryKeys.ENCHANTMENT).getOptional(this.key);
+    public Optional<? extends Holder<Enchantment>> getEntry (RegistryAccess manager) {
+        return manager.lookupOrThrow(Registries.ENCHANTMENT).get(this.key);
     }
 
     /**
@@ -77,8 +76,8 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      * @param registryLookup A lookup, typically obtained from the data generator.
      * @return An optional RegistryEntry of this enchantment.
      */
-    public Optional<? extends RegistryEntry<Enchantment>> getEntry (RegistryWrapper.WrapperLookup registryLookup) {
-        return registryLookup.getOrThrow(RegistryKeys.ENCHANTMENT).getOptional(this.key);
+    public Optional<? extends Holder<Enchantment>> getEntry (HolderLookup.Provider registryLookup) {
+        return registryLookup.lookupOrThrow(Registries.ENCHANTMENT).get(this.key);
     }
 
     /**
@@ -89,19 +88,19 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      *
      * @return An RegistryEntry of this enchantment.
      */
-    public RegistryEntry<Enchantment> getEntryOrThrow () {
+    public Holder<Enchantment> getEntryOrThrow () {
         return this.getEntry().orElseThrow();
     }
 
     /**
      * Uses a registry manager to obtain an entry for this enchantment.
      *
-     * @see net.minecraft.world.WorldView
+     * @see net.minecraft.world.level.LevelReader
      *
      * @param manager A registry manager, typically obtained from a World.
      * @return An RegistryEntry of this enchantment.
      */
-    public RegistryEntry<Enchantment> getEntryOrThrow (DynamicRegistryManager manager) {
+    public Holder<Enchantment> getEntryOrThrow (RegistryAccess manager) {
         return this.getEntry(manager).orElseThrow();
     }
 
@@ -111,7 +110,7 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      * @param registryLookup A lookup, typically obtained from the data generator.
      * @return An RegistryEntry of this enchantment.
      */
-    public RegistryEntry<Enchantment> getEntryOrThrow (RegistryWrapper.WrapperLookup registryLookup) {
+    public Holder<Enchantment> getEntryOrThrow (HolderLookup.Provider registryLookup) {
         return this.getEntry(registryLookup).orElseThrow();
     }
 
@@ -121,12 +120,12 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      * @param registerable The registry object provided by the vanilla bootstrapper.
      * @return The enchantment builder.
      */
-    public Enchantment.Builder getBuilder (Registerable<Enchantment> registerable) {
-        RegistryEntryLookup<Item> itemLookup = registerable.getRegistryLookup(RegistryKeys.ITEM);
-        RegistryEntryLookup<Enchantment> enchantmentLookup = registerable.getRegistryLookup(RegistryKeys.ENCHANTMENT);
-        RegistryEntryLookup<DamageType> damageLookup = registerable.getRegistryLookup(RegistryKeys.DAMAGE_TYPE);
-        RegistryEntryLookup<Block> blockLookup = registerable.getRegistryLookup(RegistryKeys.BLOCK);
-        RegistryEntryLookup<EntityType<?>> entityLookup = registerable.getRegistryLookup(RegistryKeys.ENTITY_TYPE);
+    public Enchantment.Builder getBuilder (BootstrapContext<Enchantment> registerable) {
+        HolderGetter<Item> itemLookup = registerable.lookup(Registries.ITEM);
+        HolderGetter<Enchantment> enchantmentLookup = registerable.lookup(Registries.ENCHANTMENT);
+        HolderGetter<DamageType> damageLookup = registerable.lookup(Registries.DAMAGE_TYPE);
+        HolderGetter<Block> blockLookup = registerable.lookup(Registries.BLOCK);
+        HolderGetter<EntityType<?>> entityLookup = registerable.lookup(Registries.ENTITY_TYPE);
         return this.getBuilder(itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup);
     }
 
@@ -157,28 +156,28 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
      * @param blockLookup  Registry lookup for block tags.
      * @return The enchantment builder.
      */
-    public Enchantment.Builder getBuilder (RegistryEntryLookup<Item> itemLookup, RegistryEntryLookup<Enchantment> enchantmentLookup, RegistryEntryLookup<DamageType> damageLookup, RegistryEntryLookup<Block> blockLookup, RegistryEntryLookup<EntityType<?>> entityLookup) {
+    public Enchantment.Builder getBuilder (HolderGetter<Item> itemLookup, HolderGetter<Enchantment> enchantmentLookup, HolderGetter<DamageType> damageLookup, HolderGetter<Block> blockLookup, HolderGetter<EntityType<?>> entityLookup) {
         return this.internalBuilder.create(itemLookup, enchantmentLookup, damageLookup, blockLookup, entityLookup);
     }
 
     @Override
     public String getTranslationKey () {
-        return this.key.getValue().toTranslationKey("enchantment");
+        return this.key.identifier().toLanguageKey("enchantment");
     }
 
     @Override
     public String getTranslationKey (String suffix) {
-        return this.key.getValue().toTranslationKey("enchantment", suffix);
+        return this.key.identifier().toLanguageKey("enchantment", suffix);
     }
 
     @FunctionalInterface
     public interface BuilderBuilder {
         Enchantment.Builder create (
-            RegistryEntryLookup<Item> itemLookup,
-            RegistryEntryLookup<Enchantment> enchantmentLookup,
-            RegistryEntryLookup<DamageType> damageLookup,
-            RegistryEntryLookup<Block> blockLookup,
-            RegistryEntryLookup<EntityType<?>> entityLookup
+            HolderGetter<Item> itemLookup,
+            HolderGetter<Enchantment> enchantmentLookup,
+            HolderGetter<DamageType> damageLookup,
+            HolderGetter<Block> blockLookup,
+            HolderGetter<EntityType<?>> entityLookup
         );
     }
 }

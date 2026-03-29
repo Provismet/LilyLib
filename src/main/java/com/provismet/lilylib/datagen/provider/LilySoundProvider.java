@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Provismet
+ * Copyright (C) 2024-2026 Provismet
  *
  * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
  */
@@ -9,13 +9,12 @@ package com.provismet.lilylib.datagen.provider;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.data.DataOutput;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.DataWriter;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,17 +26,17 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class LilySoundProvider implements DataProvider {
     protected final FabricDataOutput output;
-    private final CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup;
+    private final CompletableFuture<HolderLookup.Provider> registryLookup;
 
-    protected LilySoundProvider (FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+    protected LilySoundProvider (FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
         this.output = output;
         this.registryLookup = registryLookup;
     }
 
-    protected abstract void generateSoundFile (RegistryWrapper.WrapperLookup registryLookup, SoundWriter writer);
+    protected abstract void generateSoundFile (HolderLookup.Provider registryLookup, SoundWriter writer);
 
     @Override
-    public CompletableFuture<?> run (DataWriter writer) {
+    public CompletableFuture<?> run (CachedOutput writer) {
         final TreeMap<String, SoundEntry> contents = new TreeMap<>();
 
         return this.registryLookup.thenCompose(lookup -> {
@@ -46,7 +45,7 @@ public abstract class LilySoundProvider implements DataProvider {
             HashMap<String, JsonObject> cachedObjects = new HashMap<>();
             final List<CompletableFuture<?>> futures = new ArrayList<>();
             for (Map.Entry<String, SoundEntry> entry : contents.entrySet()) {
-                Identifier id = Identifier.of(entry.getKey());
+                Identifier id = Identifier.parse(entry.getKey());
                 JsonObject json;
 
                 if (cachedObjects.containsKey(id.getNamespace())) {
@@ -69,14 +68,14 @@ public abstract class LilySoundProvider implements DataProvider {
             }
 
             for (Map.Entry<String, JsonObject> entry : cachedObjects.entrySet()) {
-                futures.add(DataProvider.writeToPath(writer, entry.getValue(), this.getFilepath(entry.getKey())));
+                futures.add(DataProvider.saveStable(writer, entry.getValue(), this.getFilepath(entry.getKey())));
             }
             return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
         });
     }
 
     private Path getFilepath (String namespace) {
-        return this.output.resolvePath(DataOutput.OutputType.RESOURCE_PACK).resolve(namespace).resolve("sounds.json");
+        return this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(namespace).resolve("sounds.json");
     }
 
     @Override
@@ -110,7 +109,7 @@ public abstract class LilySoundProvider implements DataProvider {
 
         public void add (SoundEvent sound, String subtitle, Identifier... soundFiles) {
             Objects.requireNonNull(sound);
-            this.add(sound.id(), subtitle, soundFiles);
+            this.add(sound.location(), subtitle, soundFiles);
         }
 
         public void add (SoundEvent sound, String subtitle, List<Identifier> soundFiles) {

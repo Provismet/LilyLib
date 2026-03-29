@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Provismet
+ * Copyright (C) 2024-2026 Provismet
  *
  * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
  */
@@ -10,23 +10,22 @@ import com.provismet.lilylib.container.EnchantmentContainer;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
-import net.minecraft.block.Block;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryEntryLookup;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.Block;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class LilyEnchantmentProvider extends FabricDynamicRegistryProvider {
-    protected LilyEnchantmentProvider (FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    protected LilyEnchantmentProvider (FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
@@ -36,45 +35,45 @@ public abstract class LilyEnchantmentProvider extends FabricDynamicRegistryProvi
     }
 
     @Override
-    protected final void configure (RegistryWrapper.WrapperLookup wrapperLookup, Entries entries) {
+    protected final void configure (HolderLookup.Provider wrapperLookup, Entries entries) {
         EnchantmentBuilder builder = new EnchantmentBuilder(entries);
         generate(wrapperLookup, builder);
     }
 
-    protected abstract void generate (RegistryWrapper.WrapperLookup wrapperLookup, EnchantmentBuilder builder);
+    protected abstract void generate (HolderLookup.Provider wrapperLookup, EnchantmentBuilder builder);
 
     public static class EnchantmentBuilder {
-        public final RegistryEntryLookup<Item> itemLookup;
-        public final RegistryEntryLookup<DamageType> damageTypeLookup;
-        public final RegistryEntryLookup<Block> blockLookup;
-        public final RegistryEntryLookup<Enchantment> enchantmentLookup;
-        public final RegistryEntryLookup<EntityType<?>> entityLookup;
+        public final HolderGetter<Item> itemLookup;
+        public final HolderGetter<DamageType> damageTypeLookup;
+        public final HolderGetter<Block> blockLookup;
+        public final HolderGetter<Enchantment> enchantmentLookup;
+        public final HolderGetter<EntityType<?>> entityLookup;
 
         private final Entries entries;
 
         protected EnchantmentBuilder (Entries entries) {
             this.entries = entries;
-            this.itemLookup = entries.getLookup(RegistryKeys.ITEM);
-            this.damageTypeLookup = entries.getLookup(RegistryKeys.DAMAGE_TYPE);
-            this.blockLookup = entries.getLookup(RegistryKeys.BLOCK);
-            this.enchantmentLookup = entries.getLookup(RegistryKeys.ENCHANTMENT);
-            this.entityLookup = entries.getLookup(RegistryKeys.ENTITY_TYPE);
+            this.itemLookup = entries.getLookup(Registries.ITEM);
+            this.damageTypeLookup = entries.getLookup(Registries.DAMAGE_TYPE);
+            this.blockLookup = entries.getLookup(Registries.BLOCK);
+            this.enchantmentLookup = entries.getLookup(Registries.ENCHANTMENT);
+            this.entityLookup = entries.getLookup(Registries.ENTITY_TYPE);
         }
 
         public void add (Identifier id, Enchantment.Builder enchantmentBuilder) {
-            this.entries.add(RegistryKey.of(RegistryKeys.ENCHANTMENT, id), enchantmentBuilder.build(id));
+            this.entries.add(ResourceKey.create(Registries.ENCHANTMENT, id), enchantmentBuilder.build(id));
         }
 
         public void add (Identifier id, Enchantment.Builder enchantmentBuilder, ResourceCondition... conditions) {
-            this.entries.add(RegistryKey.of(RegistryKeys.ENCHANTMENT, id), enchantmentBuilder.build(id), conditions);
+            this.entries.add(ResourceKey.create(Registries.ENCHANTMENT, id), enchantmentBuilder.build(id), conditions);
         }
 
-        public void add (RegistryKey<Enchantment> enchantmentKey, Enchantment.Builder enchantmentBuilder) {
-            this.add(enchantmentKey.getValue(), enchantmentBuilder);
+        public void add (ResourceKey<Enchantment> enchantmentKey, Enchantment.Builder enchantmentBuilder) {
+            this.add(enchantmentKey.identifier(), enchantmentBuilder);
         }
 
-        public void add (RegistryKey<Enchantment> enchantmentKey, Enchantment.Builder enchantmentBuilder, ResourceCondition... conditions) {
-            this.add(enchantmentKey.getValue(), enchantmentBuilder, conditions);
+        public void add (ResourceKey<Enchantment> enchantmentKey, Enchantment.Builder enchantmentBuilder, ResourceCondition... conditions) {
+            this.add(enchantmentKey.identifier(), enchantmentBuilder, conditions);
         }
 
         public void add (EnchantmentContainer container) {
@@ -85,19 +84,19 @@ public abstract class LilyEnchantmentProvider extends FabricDynamicRegistryProvi
             this.add(container.getKey(), container.getBuilder(this), conditions);
         }
 
-        public RegistryEntryList<Item> getItemEntryList (TagKey<Item> tag) {
+        public HolderSet<Item> getItemEntryList (TagKey<Item> tag) {
             return this.itemLookup.getOrThrow(tag);
         }
 
-        public RegistryEntryList<DamageType> getDamageTypeEntryList (TagKey<DamageType> tag) {
+        public HolderSet<DamageType> getDamageTypeEntryList (TagKey<DamageType> tag) {
             return this.damageTypeLookup.getOrThrow(tag);
         }
 
-        public RegistryEntryList<Block> getBlockEntryList (TagKey<Block> tag) {
+        public HolderSet<Block> getBlockEntryList (TagKey<Block> tag) {
             return this.blockLookup.getOrThrow(tag);
         }
 
-        public RegistryEntryList<Enchantment> getEnchantmentEntryList (TagKey<Enchantment> tag) {
+        public HolderSet<Enchantment> getEnchantmentEntryList (TagKey<Enchantment> tag) {
             return this.enchantmentLookup.getOrThrow(tag);
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Provismet
+ * Copyright (C) 2024-2026 Provismet
  *
  * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
  */
@@ -10,8 +10,7 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.registry.RegistryOps;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.resources.RegistryOps;
 import org.jetbrains.annotations.Nullable;
 
 public record DevModeResourceCondition () implements ResourceCondition {
@@ -23,7 +22,7 @@ public record DevModeResourceCondition () implements ResourceCondition {
     }
 
     @Override
-    public boolean test (@Nullable RegistryOps.RegistryInfoGetter registryInfoGetter) {
+    public boolean test (@Nullable RegistryOps.RegistryInfoLookup registryInfoGetter) {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 }
