@@ -8,7 +8,7 @@ package com.provismet.lilylib.datagen.provider;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -25,10 +25,10 @@ import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class LilySoundProvider implements DataProvider {
-    protected final FabricDataOutput output;
+    protected final FabricPackOutput output;
     private final CompletableFuture<HolderLookup.Provider> registryLookup;
 
-    protected LilySoundProvider (FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
+    protected LilySoundProvider (FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
         this.output = output;
         this.registryLookup = registryLookup;
     }

@@ -7,7 +7,7 @@
 package com.provismet.lilylib.datagen.provider;
 
 import com.provismet.lilylib.container.EnchantmentContainer;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.minecraft.core.HolderGetter;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class LilyEnchantmentProvider extends FabricDynamicRegistryProvider {
-    protected LilyEnchantmentProvider (FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+    protected LilyEnchantmentProvider (FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 

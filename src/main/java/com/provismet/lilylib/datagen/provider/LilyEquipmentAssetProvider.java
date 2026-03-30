@@ -6,7 +6,7 @@
 
 package com.provismet.lilylib.datagen.provider;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -25,7 +25,7 @@ import java.util.function.BiConsumer;
 public abstract class LilyEquipmentAssetProvider implements DataProvider {
     private final PackOutput.PathProvider pathResolver;
 
-    public LilyEquipmentAssetProvider (FabricDataOutput output) {
+    public LilyEquipmentAssetProvider (FabricPackOutput output) {
         this.pathResolver = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "equipment");
     }
 

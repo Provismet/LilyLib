@@ -8,7 +8,7 @@ package com.provismet.lilylib.datagen.provider;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,11 +23,11 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class LilyParticleTextureProvider implements DataProvider {
-    protected final FabricDataOutput output;
+    protected final FabricPackOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final CompletableFuture<HolderLookup.Provider> registryLookup;
 
-    protected LilyParticleTextureProvider (FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
+    protected LilyParticleTextureProvider (FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
         this.output = output;
         this.pathResolver = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "particles");
         this.registryLookup = registryLookup;
