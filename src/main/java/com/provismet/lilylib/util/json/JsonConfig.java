@@ -6,9 +6,14 @@
 
 package com.provismet.lilylib.util.json;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -92,6 +97,21 @@ public class JsonConfig {
 
     public void loadFromJson (JsonReader reader) {
         this.entries.forEach(entry -> entry.saveConsumer.accept(reader));
+    }
+
+    public void saveToFile (File file) throws IOException {
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(this.toString());
+        }
+    }
+
+    public void saveToFile (Path path) throws IOException {
+        this.saveToFile(path.toFile());
+    }
+
+    @Override
+    public String toString () {
+        return new GsonBuilder().setPrettyPrinting().create().toJson(this.createJson());
     }
 
     private record ConfigEntry<T> (String key, Supplier<T> valueSupplier, Consumer<JsonReader> saveConsumer) {
