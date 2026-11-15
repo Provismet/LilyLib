@@ -11,18 +11,20 @@ import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.RegistryOps;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public record DevModeResourceCondition () implements ResourceCondition {
     public static final MapCodec<DevModeResourceCondition> CODEC = MapCodec.unit(DevModeResourceCondition::new);
 
     @Override
+    @NotNull
     public ResourceConditionType<?> getType () {
         return LilyResourceConditions.DEVELOPMENT_MODE_ENABLED;
     }
 
     @Override
-    public boolean test (@Nullable RegistryOps.RegistryInfoLookup registryInfoGetter) {
+    public boolean test (@Nullable RegistryOps.RegistryInfoLookup registryInfo) {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 }
