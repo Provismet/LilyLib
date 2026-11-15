@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2024-2026 Provismet
  * 
- * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
+ * See https://github.com/Provismet/LilyLib/blob/26.2/LICENSE for the full license.
  */
 
 package com.provismet.lilylib.renderers;
@@ -57,9 +57,9 @@ public class WorldItemEntityRenderer<T extends Entity> extends EntityRenderer<T,
     public void submit (WorldItemEntityRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
         matrices.pushPose();
         matrices.translate(state.xOffset, state.yOffset, state.zOffset);
-        if (state.xRotation != 0) matrices.mulPose(Axis.XP.rotationDegrees(state.xRotation));
-        if (state.yRotation != 0) matrices.mulPose(Axis.YP.rotationDegrees(state.yRotation));
-        if (state.zRotation != 0) matrices.mulPose(Axis.ZP.rotationDegrees(state.zRotation));
+        if (state.xRotation != 0) matrices.rotate(Axis.XP.rotationDegrees(state.xRotation));
+        if (state.yRotation != 0) matrices.rotate(Axis.YP.rotationDegrees(state.yRotation));
+        if (state.zRotation != 0) matrices.rotate(Axis.ZP.rotationDegrees(state.zRotation));
 
         state.item.submit(matrices, queue, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
         matrices.popPose();
