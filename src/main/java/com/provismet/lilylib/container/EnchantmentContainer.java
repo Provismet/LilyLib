@@ -1,19 +1,14 @@
 /*
  * Copyright (C) 2024-2026 Provismet
  *
- * See https://github.com/Provismet/LilyLib/blob/1.21/LICENSE for the full license.
+ * See https://github.com/Provismet/LilyLib/blob/26.2/LICENSE for the full license.
  */
 
 package com.provismet.lilylib.container;
 
 import com.provismet.lilylib.datagen.provider.LilyEnchantmentProvider;
-import java.util.Optional;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -34,7 +29,7 @@ import net.minecraft.world.level.block.Block;
  * @see ResourceKey
  * @see Enchantment.Builder
  */
-public class EnchantmentContainer extends AbstractContainer<Enchantment> {
+public class EnchantmentContainer extends AbstractRegisteredContainer<Enchantment> {
     private final BuilderBuilder internalBuilder;
 
     public EnchantmentContainer (Identifier id, BuilderBuilder builder) {
@@ -42,76 +37,8 @@ public class EnchantmentContainer extends AbstractContainer<Enchantment> {
     }
 
     public EnchantmentContainer (ResourceKey<Enchantment> key, BuilderBuilder builder) {
-        super(key);
+        super(key, Registries.ENCHANTMENT);
         this.internalBuilder = builder;
-    }
-
-    /**
-     * Creates a generic registry entry for this enchantment.
-     * <p>
-     * NOTE: This method should only be used if the alternatives are unavailable.
-     * This method relies on builtin/bootstrapped registries and is likely to fail if used in gameplay.
-     *
-     * @return An optional RegistryEntry of this enchantment.
-     */
-    public Optional<? extends Holder<Enchantment>> getEntry () {
-        return VanillaRegistries.createLookup().lookupOrThrow(Registries.ENCHANTMENT).get(this.getKey());
-    }
-
-    /**
-     * Uses a registry manager to obtain an entry for this enchantment.
-     *
-     * @see net.minecraft.world.level.LevelReader
-     *
-     * @param manager A registry manager, typically obtained from a World.
-     * @return An optional RegistryEntry of this enchantment.
-     */
-    public Optional<? extends Holder<Enchantment>> getEntry (RegistryAccess manager) {
-        return manager.lookupOrThrow(Registries.ENCHANTMENT).get(this.key);
-    }
-
-    /**
-     * Uses a registry lookup to obtain an entry for this enchantment.
-     *
-     * @param registryLookup A lookup, typically obtained from the data generator.
-     * @return An optional RegistryEntry of this enchantment.
-     */
-    public Optional<? extends Holder<Enchantment>> getEntry (HolderLookup.Provider registryLookup) {
-        return registryLookup.lookupOrThrow(Registries.ENCHANTMENT).get(this.key);
-    }
-
-    /**
-     * Creates a generic registry entry for this enchantment.
-     *
-     * @implNote This method should only be used if the alternatives are unavailable.
-     * This method relies on builtin/bootstrapped registries and is likely to fail if used in gameplay.
-     *
-     * @return An RegistryEntry of this enchantment.
-     */
-    public Holder<Enchantment> getEntryOrThrow () {
-        return this.getEntry().orElseThrow();
-    }
-
-    /**
-     * Uses a registry manager to obtain an entry for this enchantment.
-     *
-     * @see net.minecraft.world.level.LevelReader
-     *
-     * @param manager A registry manager, typically obtained from a World.
-     * @return An RegistryEntry of this enchantment.
-     */
-    public Holder<Enchantment> getEntryOrThrow (RegistryAccess manager) {
-        return this.getEntry(manager).orElseThrow();
-    }
-
-    /**
-     * Uses a registry lookup to obtain an entry for this enchantment.
-     *
-     * @param registryLookup A lookup, typically obtained from the data generator.
-     * @return An RegistryEntry of this enchantment.
-     */
-    public Holder<Enchantment> getEntryOrThrow (HolderLookup.Provider registryLookup) {
-        return this.getEntry(registryLookup).orElseThrow();
     }
 
     /**
